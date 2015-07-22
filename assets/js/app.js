@@ -1,5 +1,23 @@
 /* set the app module */
-var app = angular.module('flapperNews', []);
+var app = angular.module('flapperNews', ['ui.router']);
+
+/* set up the config */
+app.config([
+    '$stateProvider',
+    '$urlRouterProvider',
+    function($stateProvider, $urlRouterProvider)
+    {
+        /* set up the home route */
+        $stateProvider.state('home', {
+            url: '/home',
+            templateUrl: '/home.html',
+            controller: 'MainCtrl'
+        });
+
+        /* set the default if route not found */
+        $urlRouterProvider.otherwise('home');
+    }
+]);
 
 /* set up the posts factory */
 app.factory('posts', [
