@@ -1,0 +1,27 @@
+{
+  "name": "mean_stack_demo",
+  "version": "0.0.0",
+  "homepage": "https://github.com/mlmedia/mean_stack_demo",
+  "authors": [
+    "mlmedia <mike@millionlightsmedia.com>"
+  ],
+  "description": "MEAN stack demo",
+  "main": "index",
+  "keywords": [
+    "MEAN",
+    "js",
+    "angular",
+    "node",
+    "express",
+    "mongo"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "components",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}

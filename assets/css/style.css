@@ -1,0 +1,11 @@
+/**
+ * styles for Flapper News app 
+ */
+.title {
+    font-size:20px;
+    margin-left:10px;
+}
+
+form {
+    margin-top:30px;
+}
