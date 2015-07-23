@@ -8,10 +8,16 @@ app.config([
     function($stateProvider, $urlRouterProvider)
     {
         /* set up the home route */
-        $stateProvider.state('home', {
+        $stateProvider
+        .state('home', {
             url: '/home',
             templateUrl: '/home.html',
             controller: 'MainCtrl'
+        })
+        .state('posts', {
+            url: '/posts/{id}',
+            templateUrl: '/posts.html',
+            controller: 'PostsCtrl'
         });
 
         /* set the default if route not found */
@@ -62,7 +68,11 @@ app.controller('MainCtrl', [
             $scope.posts.push({
                 title: $scope.title,
                 link: $scope.link,
-                upvotes: 0
+                upvotes: 0,
+                comments: [
+                    {author: 'Joe', body: 'Cool post!', upvotes: 0},
+                    {author: 'Bob', body: 'Great idea but everything is wrong!', upvotes: 0}
+                ]
             });
 
             /* we set the variables as empty after we add the new post to clear the form */
@@ -75,5 +85,16 @@ app.controller('MainCtrl', [
         {
             post.upvotes += 1;
         }
+    }
+]);
+
+/* setup the posts controller */
+app.controller('PostsCtrl', [
+    '$scope',
+    '$stateParams',
+    'posts',
+    function($scope, $stateParams, posts)
+    {
+        $scope.post = posts.posts[$stateParams.id];
     }
 ]);
