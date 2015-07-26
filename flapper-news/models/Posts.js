@@ -15,5 +15,11 @@ var PostSchema = new mongoose.Schema({
     }]
 });
 
+/* add the function to upvote */
+PostSchema.methods.upvote = function(cb) {
+    this.upvotes += 1;
+    this.save(cb);
+};
+
 /* define the model and pass the mongoose schema */
 mongoose.model('Post', PostSchema);
