@@ -26,7 +26,12 @@ app.config([
         .state('posts', {
             url: '/posts/{id}',
             templateUrl: '/posts.html',
-            controller: 'PostsCtrl'
+            controller: 'PostsCtrl',
+            resolve: {
+                post: ['$stateParams', 'posts', function($stateParams, posts) {
+                    return posts.get($stateParams.id);
+                }]
+            }
         });
 
         /* set the default if route not found */
@@ -68,6 +73,30 @@ app.factory('posts', [
             return $http.put('/posts/' + post._id + '/upvote').success(function(data)
             {
                 post.upvotes += 1;
+            });
+        };
+
+        /* GET single post */
+        o.get = function(id)
+        {
+            return $http.get('/posts/' + id).then(function(res)
+            {
+                return res.data;
+            });
+        };
+
+        /* add a comment to a post */
+        o.addComment = function(id, comment)
+        {
+            return $http.post('/posts/' + id + '/comments', comment);
+        };
+
+        /* upvote a comment */
+        o.upvoteComment = function(post, comment)
+        {
+            return $http.put('/posts/' + post._id + '/comments/'+ comment._id + '/upvote').success(function(data)
+            {
+                comment.upvotes += 1;
             });
         };
 
@@ -142,9 +171,11 @@ app.controller('PostsCtrl', [
     '$scope',
     '$stateParams',
     'posts',
-    function($scope, $stateParams, posts)
+    'post',
+    function($scope, $stateParams, posts, post)
     {
-        $scope.post = posts.posts[$stateParams.id];
+        /* post object to $scope */
+        $scope.post = post;
 
         /* add comment */
         $scope.addComment = function()
@@ -153,12 +184,22 @@ app.controller('PostsCtrl', [
             {
                 return;
             }
-            $scope.post.comments.push({
+
+            /* ref to posts addComment method passing ID and comment */
+            posts.addComment(post._id, {
                 body: $scope.body,
                 author: 'user',
-                upvotes: 0
+            }).success(function(comment)
+            {
+                $scope.post.comments.push(comment);
             });
             $scope.body = '';
+        };
+
+        /* upvote a comment */
+        $scope.incrementUpvotes = function(comment)
+        {
+            posts.upvoteComment(post, comment);
         };
     }
 ]);
