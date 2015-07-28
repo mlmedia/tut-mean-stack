@@ -51,6 +51,27 @@ app.factory('posts', [
                 angular.copy(data, o.posts);
             });
         };
+
+        /* create a new post */
+        o.create = function(post)
+        {
+            return $http.post('/posts', post).success(function(data)
+            {
+                /* push to the posts object */
+                o.posts.push(data);
+            });
+        };
+
+        /* upvote a post */
+        o.upvote = function(post)
+        {
+            return $http.put('/posts/' + post._id + '/upvote').success(function(data)
+            {
+                post.upvotes += 1;
+            });
+        };
+
+        /* return the object (must stay on bottom) */
         return o;
     }
 ]);
@@ -79,12 +100,13 @@ app.controller('MainCtrl', [
         $scope.addPost = function()
         {
             /* if title is empty, return without posting */
-            if ( !$scope.title || $scope.title == '' )
+            if ( !$scope.title || $scope.title === '' )
             {
                 return;
             }
 
             /* add the post variables */
+            /*
             $scope.posts.push({
                 title: $scope.title,
                 link: $scope.link,
@@ -93,6 +115,13 @@ app.controller('MainCtrl', [
                     {author: 'Joe', body: 'Cool post!', upvotes: 0},
                     {author: 'Bob', body: 'Great idea but everything is wrong!', upvotes: 0}
                 ]
+            });
+            */
+
+            /* use the create method to save post to DB */
+            posts.create({
+                title: $scope.title,
+                link: $scope.link,
             });
 
             /* we set the variables as empty after we add the new post to clear the form */
@@ -103,7 +132,7 @@ app.controller('MainCtrl', [
         /* add post function */
         $scope.incrementUpvotes = function(post)
         {
-            post.upvotes += 1;
+            posts.upvote(post);
         }
     }
 ]);
