@@ -105,8 +105,6 @@ app.factory('posts', [
     }
 ]);
 
-
-
 /* setup the main controller */
 app.controller('MainCtrl', [
     '$scope',
@@ -169,10 +167,9 @@ app.controller('MainCtrl', [
 /* setup the posts controller */
 app.controller('PostsCtrl', [
     '$scope',
-    '$stateParams',
     'posts',
     'post',
-    function($scope, $stateParams, posts, post)
+    function($scope, posts, post)
     {
         /* post object to $scope */
         $scope.post = post;
