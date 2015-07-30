@@ -5,9 +5,8 @@ var mongoose = require('mongoose');
 var PostSchema = new mongoose.Schema({
     title: String,
     link: String,
-    upvotes: {
-        type: Number,
-        default: 0
+    votes: {
+        type: Number, default: 0
     },
     comments: [{
         type: mongoose.Schema.Types.ObjectId,
@@ -17,9 +16,15 @@ var PostSchema = new mongoose.Schema({
 
 /* add the function to upvote */
 PostSchema.methods.upvote = function(cb) {
-    this.upvotes += 1;
+    this.votes += 1;
     this.save(cb);
 };
+
+/* add the function to downvote */
+PostSchema.methods.downvote = function(cb) {
+    this.votes -= 1;
+    this.save(cb);
+}
 
 /* define the model and pass the mongoose schema */
 mongoose.model('Post', PostSchema);

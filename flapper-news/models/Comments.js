@@ -5,7 +5,7 @@ var mongoose = require('mongoose');
 var CommentSchema = new mongoose.Schema({
     body: String,
     author: String,
-    upvotes: {
+    votes: {
         type: Number,
         default: 0
     },
@@ -14,6 +14,18 @@ var CommentSchema = new mongoose.Schema({
         ref: 'Post'
     }
 });
+
+/* set upvote method */
+CommentSchema.methods.upvote = function(cb) {
+    this.votes += 1;
+    this.save(cb);
+};
+
+/* set downvote method */
+CommentSchema.methods.downvote = function(cb) {
+    this.votes -= 1;
+    this.save(cb);
+}
 
 /* define the model and pass the mongoose schema */
 mongoose.model('Comment', CommentSchema);
