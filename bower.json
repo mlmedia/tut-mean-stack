@@ -1,10 +1,10 @@
 {
-  "name": "MeanStack",
+  "name": "mean stack demo",
   "version": "0.0.0",
   "authors": [
-    "kle-pra <klemen.pravdic@gmail.com>"
+    "mlmedia"
   ],
-  "main": "core.js",
+  "main": "app.js",
   "license": "MIT",
   "ignore": [
     "**/.*",
