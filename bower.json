@@ -1,30 +1,22 @@
 {
-  "name": "mean_stack_demo",
+  "name": "MeanStack",
   "version": "0.0.0",
-  "homepage": "https://github.com/mlmedia/mean_stack_demo",
   "authors": [
-    "mlmedia <mike@millionlightsmedia.com>"
+    "kle-pra <klemen.pravdic@gmail.com>"
   ],
-  "description": "MEAN stack demo",
-  "main": "index",
-  "keywords": [
-    "MEAN",
-    "js",
-    "angular",
-    "node",
-    "express",
-    "mongo"
-  ],
+  "main": "core.js",
   "license": "MIT",
   "ignore": [
     "**/.*",
-    "components",
     "node_modules",
     "bower_components",
+	"components",
     "test",
     "tests"
   ],
   "dependencies": {
-    "angular-ui-router": "~0.2.15"
+    "angular": "~1.2.24",
+    "bootstrap": "~3.2.0",
+    "angular-ui-router": "~0.2.11"
   }
 }
