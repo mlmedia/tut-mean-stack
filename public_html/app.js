@@ -1,6 +1,6 @@
-  (function () {
-  angular.module('flapperNews', ['ui.router'])
-  .config([
+(function () {
+    angular.module('flapperNews', ['ui.router'])
+    .config([
       '$stateProvider',
       '$urlRouterProvider',
       function ($stateProvider, $urlRouterProvider) {
@@ -162,4 +162,3 @@
   }]);
 
 })();
-
