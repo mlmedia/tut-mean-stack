@@ -216,7 +216,7 @@
                 });
             };
 
-            /* return the object after defining all functions to object */
+            /* return the object after defining all functions */
             return o;
         }
     ]);
