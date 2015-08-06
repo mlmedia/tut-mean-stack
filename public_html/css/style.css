@@ -1,3 +1,7 @@
+/**
+ * styles for MEAN stack demo (flapper news)
+ * I created a CSS file because inline styles are really sucky
+ */
 form {
     margin-top:30px;
 }
