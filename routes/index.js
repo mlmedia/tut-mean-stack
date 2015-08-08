@@ -2,9 +2,13 @@
 var mongoose = require('mongoose');
 var express = require('express');
 var passport = require('passport');
+var jwt = require('express-jwt');
 
 /* set the express router object */
 var router = express.Router();
+
+/* set up auth object with jwt */
+var auth = jwt({secret: 'SECRET', userProperty: 'payload'});
 
 /* import the mongoose models */
 var Post = mongoose.model('Post');
