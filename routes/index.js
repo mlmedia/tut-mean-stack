@@ -1,13 +1,15 @@
 /* get libraries */
 var mongoose = require('mongoose');
 var express = require('express');
+var passport = require('passport');
 
 /* set the express router object */
 var router = express.Router();
 
-/* set the mongoose model vars */
+/* import the mongoose models */
 var Post = mongoose.model('Post');
 var Comment = mongoose.model('Comment');
+var User = mongoose.model('User');
 
 /* GET home page */
 router.get('/', function(req, res)
@@ -198,6 +200,71 @@ router.put('/posts/:post/comments/:comment/downvote', function(req, res, next)
         /* json response */
         res.json(comment);
     });
+});
+
+/* register page */
+router.post('/register', function(req, res, next)
+{
+    /* if form fields are blank, return error */
+    if(!req.body.username || !req.body.password)
+    {
+        return res.status(400).json({
+            message: 'Please fill out all fields'
+        });
+    }
+
+    /* setup user object */
+    var user = new User();
+    user.username = req.body.username;
+    user.setPassword(req.body.password)
+
+    /* save user with username and password */
+    user.save(function(err)
+    {
+        if(err)
+        {
+            return next(err);
+        }
+
+        /* return json response */
+        return res.json({
+            token: user.generateJWT()
+        });
+    });
+});
+
+/* set up login page */
+router.post('/login', function(req, res, next)
+{
+    /* if username or password is missing, return the error */
+    if(!req.body.username || !req.body.password)
+    {
+        return res.status(400).json({
+            message: 'Please fill out all fields'
+        });
+    }
+
+    /* authenticate w/ passport (local strategy) */
+    passport.authenticate('local', function(err, user, info)
+    {
+        /* if an error, return */
+        if(err)
+        {
+            return next(err);
+        }
+
+        /* if user is available, return json response w/ web token */
+        if(user)
+        {
+            return res.json({
+                token: user.generateJWT()
+            });
+        }
+        else /* else return the error response */
+        {
+            return res.status(401).json(info);
+        }
+    })(req, res, next);
 });
 
 /* export the router object to the app */
