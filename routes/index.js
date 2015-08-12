@@ -8,7 +8,10 @@ var jwt = require('express-jwt');
 var router = express.Router();
 
 /* set up auth object with jwt */
-var auth = jwt({secret: 'SECRET', userProperty: 'payload'});
+var auth = jwt({
+    secret: 'SECRET',
+    userProperty: 'payload'
+});
 
 /* import the mongoose models */
 var Post = mongoose.model('Post');
@@ -16,20 +19,16 @@ var Comment = mongoose.model('Comment');
 var User = mongoose.model('User');
 
 /* GET home page */
-router.get('/', function(req, res)
-{
+router.get('/', function(req, res) {
     /* response = render the index template */
     res.render('index');
 });
 
 /* GET posts index page */
-router.get('/posts', function(req, res, next)
-{
-    Post.find(function(err, posts)
-    {
+router.get('/posts', function(req, res, next) {
+    Post.find(function(err, posts) {
         /* if an error, return */
-        if(err)
-        {
+        if (err) {
             return next(err);
         }
 
@@ -39,17 +38,17 @@ router.get('/posts', function(req, res, next)
 });
 
 /* POST to posts page */
-router.post('/posts', function(req, res, next)
-{
+router.post('/posts', auth, function(req, res, next) {
     /* setup a new post */
     var post = new Post(req.body);
 
+    /* set the author from the auth */
+    post.author = req.payload.username;
+
     /* save a new post */
-    post.save(function(err, post)
-    {
+    post.save(function(err, post) {
         /* if an error, return */
-        if(err)
-        {
+        if (err) {
             return next(err);
         }
 
@@ -59,14 +58,11 @@ router.post('/posts', function(req, res, next)
 });
 
 /* router param for the post */
-router.param('post', function(req, res, next, id)
-{
+router.param('post', function(req, res, next, id) {
     var query = Post.findById(id);
-    query.exec(function (err, post)
-    {
+    query.exec(function(err, post) {
         /* if an error, return */
-        if (err)
-        {
+        if (err) {
             return next(err);
         }
         if (!post) {
@@ -80,18 +76,14 @@ router.param('post', function(req, res, next, id)
 });
 
 /* router param for the comment */
-router.param('comment', function(req, res, next, id)
-{
+router.param('comment', function(req, res, next, id) {
     var query = Comment.findById(id);
-    query.exec(function (err, comment)
-    {
+    query.exec(function(err, comment) {
         /* if an error, return */
-        if (err)
-        {
+        if (err) {
             return next(err);
         }
-        if (!comment)
-        {
+        if (!comment) {
             return next(new Error("can't find comment"));
         }
 
@@ -102,21 +94,17 @@ router.param('comment', function(req, res, next, id)
 });
 
 /* GET post from ID */
-router.get('/posts/:post', function(req, res, next)
-{
+router.get('/posts/:post', function(req, res, next) {
     /* populate comments from the post */
-    req.post.populate('comments', function(err, post)
-    {
+    req.post.populate('comments', function(err, post) {
         /* json response */
         res.json(post);
     });
 });
 
 /* PUT an upvote to the post */
-router.put('/posts/:post/upvote', function(req, res, next)
-{
-    req.post.upvote(function(err, post)
-    {
+router.put('/posts/:post/upvote', auth, function(req, res, next) {
+    req.post.upvote(function(err, post) {
         /* if an error, return */
         if (err) {
             return next(err);
@@ -128,13 +116,10 @@ router.put('/posts/:post/upvote', function(req, res, next)
 });
 
 /* PUT a downvote to the post */
-router.put('/posts/:post/downvote', function(req, res, next)
-{
-    req.post.downvote(function(err, post)
-    {
+router.put('/posts/:post/downvote', auth, function(req, res, next) {
+    req.post.downvote(function(err, post) {
         /* if an error, return */
-        if (err)
-        {
+        if (err) {
             return next(err);
         }
 
@@ -144,27 +129,23 @@ router.put('/posts/:post/downvote', function(req, res, next)
 });
 
 /* POST a new comment */
-router.post('/posts/:post/comments', function(req, res, next)
-{
+router.post('/posts/:post/comments', auth, function(req, res, next) {
     var comment = new Comment(req.body);
     comment.post = req.post;
+    comment.author = req.payload.username; /* add username from auth */
 
     /* save a comment to the post */
-    comment.save(function(err, comment)
-    {
+    comment.save(function(err, comment) {
         /* if an error, return */
-        if(err)
-        {
+        if (err) {
             return next(err);
         }
 
         /* push comment to post and save */
         req.post.comments.push(comment);
-        req.post.save(function(err, post)
-        {
+        req.post.save(function(err, post) {
             /* if an error, return */
-            if(err)
-            {
+            if (err) {
                 return next(err);
             }
 
@@ -175,13 +156,10 @@ router.post('/posts/:post/comments', function(req, res, next)
 });
 
 /* PUT an upvte to a comment */
-router.put('/posts/:post/comments/:comment/upvote', function(req, res, next)
-{
-    req.comment.upvote(function(err, comment)
-    {
+router.put('/posts/:post/comments/:comment/upvote', auth, function(req, res, next) {
+    req.comment.upvote(function(err, comment) {
         /* if an error, return */
-        if (err)
-        {
+        if (err) {
             return next(err);
         }
 
@@ -191,13 +169,10 @@ router.put('/posts/:post/comments/:comment/upvote', function(req, res, next)
 });
 
 /* PUT a downvote to a comment */
-router.put('/posts/:post/comments/:comment/downvote', function(req, res, next)
-{
-    req.comment.downvote(function(err, comment)
-    {
+router.put('/posts/:post/comments/:comment/downvote', auth, function(req, res, next) {
+    req.comment.downvote(function(err, comment) {
         /* if an error, return */
-        if (err)
-        {
+        if (err) {
             return next(err);
         }
 
@@ -207,11 +182,9 @@ router.put('/posts/:post/comments/:comment/downvote', function(req, res, next)
 });
 
 /* register page */
-router.post('/register', function(req, res, next)
-{
+router.post('/register', function(req, res, next) {
     /* if form fields are blank, return error */
-    if(!req.body.username || !req.body.password)
-    {
+    if (!req.body.username || !req.body.password) {
         return res.status(400).json({
             message: 'Please fill out all fields'
         });
@@ -223,10 +196,8 @@ router.post('/register', function(req, res, next)
     user.setPassword(req.body.password)
 
     /* save user with username and password */
-    user.save(function(err)
-    {
-        if(err)
-        {
+    user.save(function(err) {
+        if (err) {
             return next(err);
         }
 
@@ -238,34 +209,27 @@ router.post('/register', function(req, res, next)
 });
 
 /* set up login page */
-router.post('/login', function(req, res, next)
-{
+router.post('/login', function(req, res, next) {
     /* if username or password is missing, return the error */
-    if(!req.body.username || !req.body.password)
-    {
+    if (!req.body.username || !req.body.password) {
         return res.status(400).json({
             message: 'Please fill out all fields'
         });
     }
 
     /* authenticate w/ passport (local strategy) */
-    passport.authenticate('local', function(err, user, info)
-    {
+    passport.authenticate('local', function(err, user, info) {
         /* if an error, return */
-        if(err)
-        {
+        if (err) {
             return next(err);
         }
 
         /* if user is available, return json response w/ web token */
-        if(user)
-        {
+        if (user) {
             return res.json({
                 token: user.generateJWT()
             });
-        }
-        else /* else return the error response */
-        {
+        } else /* else return the error response */ {
             return res.status(401).json(info);
         }
     })(req, res, next);
