@@ -28,6 +28,26 @@
                             return posts.get($stateParams.id);
                         }]
                     }
+                })
+                .state('login', {
+                    url: '/login',
+                    templateUrl: '/login.html',
+                    controller: 'AuthCtrl',
+                    onEnter: ['$state', 'auth', function($state, auth) {
+                        if (auth.isLoggedIn()) {
+                            $state.go('home');
+                        }
+                    }]
+                })
+                .state('register', {
+                    url: '/register',
+                    templateUrl: '/register.html',
+                    controller: 'AuthCtrl',
+                    onEnter: ['$state', 'auth', function($state, auth) {
+                        if (auth.isLoggedIn()) {
+                            $state.go('home');
+                        }
+                    }]
                 });
             $urlRouterProvider.otherwise('home');
         }
@@ -113,6 +133,34 @@
             /* downvote a comment */
             $scope.downvote = function(comment) {
                 posts.downvoteComment(post, comment);
+            };
+        }
+    ]);
+
+    /* auth controller */
+    app.controller('AuthCtrl', [
+        '$scope',
+        '$state',
+        'auth',
+        function($scope, $state, auth) {
+            $scope.user = {};
+
+            /* register */
+            $scope.register = function() {
+                auth.register($scope.user).error(function(error) {
+                    $scope.error = error;
+                }).then(function() {
+                    $state.go('home');
+                });
+            };
+
+            /* log in */
+            $scope.logIn = function() {
+                auth.logIn($scope.user).error(function(error) {
+                    $scope.error = error;
+                }).then(function() {
+                    $state.go('home');
+                });
             };
         }
     ]);
