@@ -57,8 +57,12 @@
     app.controller('MainCtrl', [
         '$scope',
         'posts',
-        function($scope, posts) {
+        'auth',
+        function($scope, posts, auth) {
             $scope.posts = posts.posts;
+
+            /* check if user is logged in (for authenticated actions) */
+            $scope.isLoggedIn = auth.isLoggedIn;
 
             /* set title to blank to prevent empty posts */
             $scope.title = '';
@@ -103,8 +107,12 @@
         '$scope',
         'posts',
         'post',
-        function($scope, posts, post) {
+        'auth',
+        function($scope, posts, post, auth) {
             $scope.post = post;
+
+            /* check if user is logged in (for authenticated actions) */
+            $scope.isLoggedIn = auth.isLoggedIn;
 
             /* add comment to post */
             $scope.addComment = function() {
@@ -242,7 +250,8 @@
     /* service for posts */
     app.factory('posts', [
         '$http',
-        function($http) {
+        'auth',
+        function($http, auth) {
             /* set up the posts object */
             var o = {
                 posts: []
@@ -260,21 +269,33 @@
              * when $http gets success, it adds this post to the posts object in local factory
              */
             o.create = function(post) {
-                return $http.post('/posts', post).success(function(data) {
+                return $http.post('/posts', post, {
+                    headers: {
+                        Authorization: 'Bearer ' + auth.getToken()
+                    }
+                }).success(function(data) {
                     o.posts.push(data);
                 });
             };
 
             /* use express route for this post's id to add upvote to mongo model */
             o.upvote = function(post) {
-                return $http.put('/posts/' + post._id + '/upvote').success(function(data) {
-                    post.votes += 1;
+                return $http.put('/posts/' + post._id + '/upvote', null, {
+                    headers: {
+                        Authorization: 'Bearer ' + auth.getToken()
+                    }
+                }).success(function(data) {
+                    post.upvotes += 1;
                 });
             };
 
             /* downvote a post */
             o.downvote = function(post) {
-                return $http.put('/posts/' + post._id + '/downvote').success(function(data) {
+                return $http.put('/posts/' + post._id + '/downvote', null, {
+                    headers: {
+                        Authorization: 'Bearer ' + auth.getToken()
+                    }
+                }).success(function(data) {
                     post.votes -= 1;
                 });
             };
@@ -288,19 +309,31 @@
 
             /* add a comment */
             o.addComment = function(id, comment) {
-                return $http.post('/posts/' + id + '/comments', comment);
+                return $http.post('/posts/' + id + '/comments', comment, {
+                    headers: {
+                        Authorization: 'Bearer ' + auth.getToken()
+                    }
+                });
             };
 
             /* upvote a comment */
             o.upvoteComment = function(post, comment) {
-                return $http.put('/posts/' + post._id + '/comments/' + comment._id + '/upvote').success(function(data) {
-                    comment.votes += 1;
+                return $http.put('/posts/' + post._id + '/comments/' + comment._id + '/upvote', null, {
+                    headers: {
+                        Authorization: 'Bearer ' + auth.getToken()
+                    }
+                }).success(function(data) {
+                    comment.upvotes += 1;
                 });
             };
 
             /* downvote a comment */
             o.downvoteComment = function(post, comment) {
-                return $http.put('/posts/' + post._id + '/comments/' + comment._id + '/downvote').success(function(data) {
+                return $http.put('/posts/' + post._id + '/comments/' + comment._id + '/downvote', null, {
+                    headers: {
+                        Authorization: 'Bearer ' + auth.getToken()
+                    }
+                }).success(function(data) {
                     comment.votes -= 1;
                 });
             };
