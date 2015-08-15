@@ -285,7 +285,7 @@
                         Authorization: 'Bearer ' + auth.getToken()
                     }
                 }).success(function(data) {
-                    post.upvotes += 1;
+                    post.votes += 1;
                 });
             };
 
@@ -323,7 +323,7 @@
                         Authorization: 'Bearer ' + auth.getToken()
                     }
                 }).success(function(data) {
-                    comment.upvotes += 1;
+                    comment.votes += 1;
                 });
             };
 
