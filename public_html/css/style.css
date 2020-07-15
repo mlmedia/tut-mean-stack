@@ -3,20 +3,20 @@
  * I created a CSS file because inline styles are really sucky
  */
 form {
-    margin-top:30px;
+	margin-top: 30px;
 }
 
 .title {
-    font-size:20px;
-    margin-left:10px;
+	font-size: 20px;
+	margin-left: 10px;
 }
 
 .comment {
-    font-size:20px;
-    margin-left:10px;
+	font-size: 20px;
+	margin-left: 10px;
 }
 
 .glyphicon-thumbs-up,
 .glyphicon-thumbs-down {
-    cursor:pointer;
+	cursor: pointer;
 }
